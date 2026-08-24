@@ -12,14 +12,13 @@
   <tr>
     <th>视频库</th>
     <th>筛选设置</th>
-    <th>关于本软件</th>
   </tr>
   <tr>
-    <td><img src="screenshots/v120-home.png" alt="视频库首页" width="260"></td>
-    <td><img src="screenshots/v120-filter.png" alt="筛选抽屉" width="260"></td>
-    <td><img src="screenshots/v120-about.png" alt="关于本软件页面" width="260"></td>
+    <td><img src="screenshots/v120-home.png" alt="视频库首页" width="390"></td>
+    <td><img src="screenshots/v120-filter.png" alt="筛选抽屉" width="390"></td>
   </tr>
 </table>
+
 
 ## 主要功能
 
