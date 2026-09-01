@@ -40,6 +40,9 @@ export default function HomeScreen(): JSX.Element {
   const insets = useSafeAreaInsets();
   const { toast } = useToast();
   const foreground = useCSSVariable("--foreground");
+  const muted = useCSSVariable("--muted");
+  const foregroundColor = typeof foreground === "string" ? foreground : "#000";
+  const mutedColor = typeof muted === "string" ? muted : "#8e8e93";
 
   const [config, setConfig] = useState<FilterConfig>(defaultFilter);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -236,17 +239,10 @@ export default function HomeScreen(): JSX.Element {
       style={{ paddingTop: insets.top + 10, paddingBottom: insets.bottom + 10 }}
     >
       <View className="flex-1 px-4">
-        <View className="flex-row items-center justify-between pb-3">
-          <View className="flex-1">
-            <Text className="text-2xl font-bold text-foreground">无损视频旋转</Text>
-            <Text className="text-xs text-muted">只修改播放方向，不重新编码视频</Text>
-          </View>
+        <View className="flex-row items-center justify-between pb-4">
+          <Text className="text-3xl font-bold text-foreground">无损视频旋转</Text>
           <Button size="sm" variant="tertiary" aria-label="设置" onPress={() => router.push("/about")}>
-            <Ionicons
-              name="settings-outline"
-              size={22}
-              color={typeof foreground === "string" ? foreground : "#000"}
-            />
+            <Ionicons name="settings-outline" size={22} color={foregroundColor} />
           </Button>
         </View>
 
@@ -255,12 +251,14 @@ export default function HomeScreen(): JSX.Element {
           size="lg"
           isDisabled={running}
           onPress={() => setSheetOpen(true)}
-          className="mb-3 w-full justify-between"
+          className="mb-4 w-full"
         >
+          <Ionicons name="options-outline" size={18} color={foregroundColor} />
           <Text className="text-sm font-semibold text-secondary-foreground">筛选</Text>
-          <Text numberOfLines={1} className="max-w-[68%] text-xs text-secondary-foreground">
+          <Text numberOfLines={1} className="flex-1 text-right text-xs text-muted">
             {filterSummary(config)}
           </Text>
+          <Ionicons name="chevron-forward" size={15} color={mutedColor} />
         </Button>
 
         <View className="flex-1 gap-3">
@@ -298,16 +296,14 @@ export default function HomeScreen(): JSX.Element {
           )}
 
           <View className="flex-row items-center gap-2">
-            <View className="flex-1">
-              <Text className="text-sm font-semibold text-foreground">
-                视频 {selectedCount}/{displayed.length}
-              </Text>
+            <View className="flex-1 flex-row items-baseline gap-1.5">
+              <Text className="text-lg font-bold text-accent">{selectedCount}</Text>
+              <Text className="text-xs text-muted">/ {displayed.length} 个视频</Text>
               {hiddenMotionPhotoCount > 0 && (
-                <Text className="text-xs text-accent">
-                  已隐藏动态照片 {hiddenMotionPhotoCount} 个
-                </Text>
+                <Text className="text-xs text-muted">· 已隐藏动态照片 {hiddenMotionPhotoCount}</Text>
               )}
             </View>
+            {scanning && <Spinner size="sm" />}
             {config.mode === "library" && (
               <Button
                 size="sm"
@@ -315,7 +311,8 @@ export default function HomeScreen(): JSX.Element {
                 isDisabled={running}
                 onPress={() => void refreshLibrary()}
               >
-                刷新
+                <Ionicons name="refresh-outline" size={14} color={foregroundColor} />
+                <Text className="text-xs font-medium text-foreground">刷新</Text>
               </Button>
             )}
             <Button
@@ -324,7 +321,8 @@ export default function HomeScreen(): JSX.Element {
               isDisabled={displayed.length === 0 || running}
               onPress={() => selectAll(true)}
             >
-              全选
+              <Ionicons name="checkmark-done-outline" size={14} color={foregroundColor} />
+              <Text className="text-xs font-medium text-foreground">全选</Text>
             </Button>
             <Button
               size="sm"
@@ -332,15 +330,18 @@ export default function HomeScreen(): JSX.Element {
               isDisabled={displayed.length === 0 || running}
               onPress={() => selectAll(false)}
             >
-              清空
+              <Ionicons name="close-outline" size={14} color={foregroundColor} />
+              <Text className="text-xs font-medium text-foreground">清空</Text>
             </Button>
-            {scanning && <Spinner size="sm" />}
           </View>
 
           {message != null && <Text className="text-xs text-danger">{message}</Text>}
 
           {displayed.length === 0 && !scanning ? (
-            <View className="flex-1 items-center justify-center">
+            <View className="flex-1 items-center justify-center gap-3">
+              <View className="h-16 w-16 items-center justify-center rounded-full bg-surface-secondary">
+                <Ionicons name="videocam-outline" size={28} color={mutedColor} />
+              </View>
               <Text className="text-sm text-muted">
                 {config.mode === "library" && permission?.media === "denied"
                   ? "授权后这里会显示手机中的视频"
@@ -352,8 +353,8 @@ export default function HomeScreen(): JSX.Element {
               data={displayed}
               keyExtractor={(video) => video.uri}
               numColumns={numColumns}
-              columnWrapperStyle={{ gap: 8 }}
-              contentContainerStyle={{ gap: 8, paddingBottom: 8 }}
+              columnWrapperStyle={{ gap: 10 }}
+              contentContainerStyle={{ gap: 10, paddingBottom: 8 }}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
                 <View style={{ flex: 1 }}>
@@ -382,9 +383,12 @@ export default function HomeScreen(): JSX.Element {
           size="lg"
           isDisabled={selectedCount === 0 || running}
           onPress={() => void start()}
-          className="mt-3 w-full"
+          className="mt-4 w-full"
         >
-          {running ? "正在处理…" : "开始无损旋转"}
+          <Ionicons name="reload-outline" size={18} color="#fff" />
+          <Text className="text-base font-semibold text-accent-foreground">
+            {running ? "正在处理…" : "开始无损旋转"}
+          </Text>
         </Button>
       </View>
 

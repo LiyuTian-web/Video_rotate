@@ -1,12 +1,16 @@
 import { BottomSheet, Button, Chip } from "heroui-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import type { JSX } from "react";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useCSSVariable } from "uniwind";
 
 import { pickFolder } from "../../modules/video-rotate";
 import type { Angle, FilterConfig, FormatFilter, SortOrder } from "../lib/video";
 import { formatLabels, sortLabels } from "../lib/video";
+
+type IconName = keyof typeof Ionicons.glyphMap;
 
 export function decodeTreeDisplayName(treeUri: string): string {
   const last = treeUri.split("/").pop() ?? treeUri;
@@ -36,10 +40,22 @@ function Choice({ label, selected, onPress, disabled }: ChoiceProps): JSX.Elemen
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }): JSX.Element {
+function Section({
+  icon,
+  title,
+  children,
+}: {
+  icon: IconName;
+  title: string;
+  children: React.ReactNode;
+}): JSX.Element {
+  const muted = useCSSVariable("--muted");
   return (
-    <View className="mt-4 gap-2">
-      <Text className="text-xs font-semibold uppercase text-muted">{title}</Text>
+    <View className="mt-5 gap-2.5">
+      <View className="flex-row items-center gap-1.5">
+        <Ionicons name={icon} size={13} color={typeof muted === "string" ? muted : "#8e8e93"} />
+        <Text className="text-xs font-semibold uppercase text-muted">{title}</Text>
+      </View>
       {children}
     </View>
   );
@@ -112,105 +128,113 @@ function FilterSheetBody({
         ? "默认：每个原目录内的 rotate 文件夹"
         : `默认：${draft.sourceDisplayName}/rotate`;
 
+  const foreground = useCSSVariable("--foreground");
+  const foregroundColor = typeof foreground === "string" ? foreground : "#000";
+
   return (
     <View className="px-5" style={{ paddingBottom: Math.max(insets.bottom + 4, 20) }}>
-      <Text className="pt-2 text-lg font-bold text-surface-foreground">筛选与旋转设置</Text>
+      <View className="flex-row items-center gap-2 pt-2">
+        <Ionicons name="options-outline" size={20} color={foregroundColor} />
+        <Text className="text-lg font-bold text-surface-foreground">筛选与旋转设置</Text>
+      </View>
 
-          <Section title="来源">
-            <View className="flex-row gap-2">
-              <Choice
-                label="视频库"
-                selected={draft.mode === "library"}
-                onPress={() => patch({ mode: "library" })}
-              />
-              <Choice
-                label="文件夹"
-                selected={draft.mode === "folder"}
-                onPress={() => patch({ mode: "folder" })}
-              />
-            </View>
-            {draft.mode === "folder" && (
-              <View className="flex-row items-center gap-3">
-                <View className="flex-1">
-                  <Text numberOfLines={1} className="text-sm text-surface-foreground">
-                    {draft.sourceDisplayName}
-                  </Text>
-                </View>
-                <Button size="sm" variant="secondary" onPress={pickSource}>
-                  选择文件夹
-                </Button>
-              </View>
-            )}
-            {draft.mode === "folder" && draft.sourceTreeUri == null && (
-              <Text className="text-xs text-danger">请先选择有效的源文件夹</Text>
-            )}
-          </Section>
-
-          <Section title="格式">
-            <View className="flex-row gap-2">
-              {(["all", "mov", "mp4"] as FormatFilter[]).map((format) => (
-                <Choice
-                  key={format}
-                  label={formatLabels[format]}
-                  selected={draft.format === format}
-                  onPress={() => patch({ format })}
-                />
-              ))}
-            </View>
-          </Section>
-
-          <Section title="排序">
-            <View className="flex-row gap-2">
-              {(["newest", "oldest", "name"] as SortOrder[]).map((sort) => (
-                <Choice
-                  key={sort}
-                  label={sortLabels[sort]}
-                  selected={draft.sort === sort}
-                  onPress={() => patch({ sort })}
-                />
-              ))}
-            </View>
-          </Section>
-
-          <Section title="旋转角度">
-            <View className="flex-row gap-2">
-              {([90, 180, 270] as Angle[]).map((angle) => (
-                <Choice
-                  key={angle}
-                  label={`${angle}°`}
-                  selected={draft.angle === angle}
-                  onPress={() => patch({ angle })}
-                />
-              ))}
-            </View>
-          </Section>
-
-          <Section title="输出位置">
-            <View className="flex-row items-center gap-3">
-              <Text numberOfLines={2} className="flex-1 text-sm text-surface-foreground">
-                {outputText}
+      <Section icon="albums-outline" title="来源">
+        <View className="flex-row gap-2">
+          <Choice
+            label="视频库"
+            selected={draft.mode === "library"}
+            onPress={() => patch({ mode: "library" })}
+          />
+          <Choice
+            label="文件夹"
+            selected={draft.mode === "folder"}
+            onPress={() => patch({ mode: "folder" })}
+          />
+        </View>
+        {draft.mode === "folder" && (
+          <View className="flex-row items-center gap-3">
+            <View className="flex-1">
+              <Text numberOfLines={1} className="text-sm text-surface-foreground">
+                {draft.sourceDisplayName}
               </Text>
-              {draft.customOutputTreeUri != null && (
-                <Button
-                  size="sm"
-                  variant="tertiary"
-                  onPress={() => patch({ customOutputTreeUri: null, customOutputDisplayName: "" })}
-                >
-                  恢复默认
-                </Button>
-              )}
-              <Button size="sm" variant="secondary" onPress={pickOutput}>
-                更改
-              </Button>
             </View>
-          </Section>
+            <Button size="sm" variant="secondary" onPress={pickSource}>
+              选择文件夹
+            </Button>
+          </View>
+        )}
+        {draft.mode === "folder" && draft.sourceTreeUri == null && (
+          <Text className="text-xs text-danger">请先选择有效的源文件夹</Text>
+        )}
+      </Section>
 
-      <View className="mt-5 flex-row gap-3 border-t border-separator pt-4">
+      <Section icon="film-outline" title="格式">
+        <View className="flex-row gap-2">
+          {(["all", "mov", "mp4"] as FormatFilter[]).map((format) => (
+            <Choice
+              key={format}
+              label={formatLabels[format]}
+              selected={draft.format === format}
+              onPress={() => patch({ format })}
+            />
+          ))}
+        </View>
+      </Section>
+
+      <Section icon="swap-vertical-outline" title="排序">
+        <View className="flex-row gap-2">
+          {(["newest", "oldest", "name"] as SortOrder[]).map((sort) => (
+            <Choice
+              key={sort}
+              label={sortLabels[sort]}
+              selected={draft.sort === sort}
+              onPress={() => patch({ sort })}
+            />
+          ))}
+        </View>
+      </Section>
+
+      <Section icon="sync-outline" title="旋转角度">
+        <View className="flex-row gap-2">
+          {([90, 180, 270] as Angle[]).map((angle) => (
+            <Choice
+              key={angle}
+              label={`${angle}°`}
+              selected={draft.angle === angle}
+              onPress={() => patch({ angle })}
+            />
+          ))}
+        </View>
+      </Section>
+
+      <Section icon="folder-open-outline" title="输出位置">
+        <View className="flex-row items-center gap-3">
+          <Text numberOfLines={2} className="flex-1 text-sm text-surface-foreground">
+            {outputText}
+          </Text>
+          {draft.customOutputTreeUri != null && (
+            <Button
+              size="sm"
+              variant="tertiary"
+              onPress={() => patch({ customOutputTreeUri: null, customOutputDisplayName: "" })}
+            >
+              恢复默认
+            </Button>
+          )}
+          <Button size="sm" variant="secondary" onPress={pickOutput}>
+            更改
+          </Button>
+        </View>
+      </Section>
+
+      <View className="mt-6 flex-row gap-3 border-t border-separator pt-4">
         <Button className="flex-1" variant="tertiary" onPress={onClose}>
-          取消
+          <Ionicons name="close-outline" size={16} color={foregroundColor} />
+          <Text className="text-sm font-semibold text-foreground">取消</Text>
         </Button>
         <Button className="flex-1" isDisabled={!folderReady} onPress={() => onApply(draft)}>
-          完成
+          <Ionicons name="checkmark-outline" size={16} color="#fff" />
+          <Text className="text-sm font-semibold text-accent-foreground">完成</Text>
         </Button>
       </View>
     </View>

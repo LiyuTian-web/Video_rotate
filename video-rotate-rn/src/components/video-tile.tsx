@@ -1,4 +1,5 @@
-import { Card } from "heroui-native";
+import { Card, Spinner } from "heroui-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import type { JSX } from "react";
 import { useEffect, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
@@ -48,18 +49,20 @@ export function VideoTile({ video, selected, enabled, onToggle }: VideoTileProps
         <View className="aspect-[17/12] items-center justify-center overflow-hidden bg-surface-secondary">
           {thumbnail != null ? (
             <Image source={{ uri: thumbnail }} resizeMode="cover" className="h-full w-full" />
+          ) : thumbnail === null ? (
+            <Ionicons name="alert-circle-outline" size={24} color="#8e8e93" />
           ) : (
-            <Text className="text-2xl text-muted">{thumbnail === null ? "▶" : "…"}</Text>
+            <Spinner size="sm" color="secondary" />
           )}
           <View
             className={`absolute right-2 top-2 h-6 w-6 items-center justify-center rounded-full ${
               selected ? "bg-accent" : "bg-black/45"
             }`}
           >
-            {selected && <Text className="text-xs font-bold text-accent-foreground">✓</Text>}
+            {selected && <Ionicons name="checkmark" size={14} color="#fff" />}
           </View>
           {video.durationMs > 0 && (
-            <View className="absolute bottom-2 right-2 rounded bg-black/65 px-1 py-0.5">
+            <View className="absolute bottom-2 right-2 rounded-full bg-black/65 px-1.5 py-0.5">
               <Text className="text-[10px] text-white">{formatDuration(video.durationMs)}</Text>
             </View>
           )}
