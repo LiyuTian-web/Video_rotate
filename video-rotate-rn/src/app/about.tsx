@@ -68,17 +68,12 @@ export default function SettingsScreen(): JSX.Element {
 
   const contactAuthor = async (): Promise<void> => {
     setMessage(null);
-    const url = `mailto:${AUTHOR_EMAIL}`;
     try {
-      if (await Linking.canOpenURL(url)) {
-        await Linking.openURL(url);
-        return;
-      }
+      await Linking.openURL(`mailto:${AUTHOR_EMAIL}`);
     } catch {
-      // fall through to clipboard
+      await Clipboard.setStringAsync(AUTHOR_EMAIL);
+      setMessage("未找到可用的邮件应用，邮箱地址已复制到剪贴板");
     }
-    await Clipboard.setStringAsync(AUTHOR_EMAIL);
-    setMessage("未找到邮件应用，邮箱地址已复制到剪贴板");
   };
 
   return (
