@@ -22,21 +22,16 @@ const themeModes: ThemeModeOption[] = [
 function DonationCard({
   title,
   source,
-  ratio,
+  imageClassName,
 }: {
   title: string;
   source: number;
-  ratio: number;
+  imageClassName: string;
 }): JSX.Element {
   return (
     <Card className="items-center p-4">
       <Text className="text-base font-semibold text-surface-foreground">{title}</Text>
-      <Image
-        source={source}
-        resizeMode="contain"
-        style={{ width: 200, aspectRatio: ratio }}
-        className="mt-3"
-      />
+      <Image source={source} resizeMode="contain" className={imageClassName} />
     </Card>
   );
 }
@@ -143,12 +138,12 @@ export default function SettingsScreen(): JSX.Element {
           <DonationCard
             title="支付宝"
             source={require("../../assets/images/donate_alipay.jpg")}
-            ratio={1080 / 1620}
+            imageClassName="mt-3 h-[300px] w-[200px]"
           />
           <DonationCard
             title="微信支付"
             source={require("../../assets/images/donate_wechat.png")}
-            ratio={1304 / 1777}
+            imageClassName="mt-3 h-[272px] w-[200px]"
           />
         </View>
       </ScrollView>

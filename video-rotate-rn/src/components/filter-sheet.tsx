@@ -1,7 +1,7 @@
 import { BottomSheet, Button, Chip } from "heroui-native";
 import type { JSX } from "react";
 import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { pickFolder } from "../../modules/video-rotate";
@@ -57,12 +57,8 @@ export function FilterSheet({ open, initial, onClose, onApply }: FilterSheetProp
     <BottomSheet isOpen={open} onOpenChange={(value) => !value && onClose()}>
       <BottomSheet.Portal>
         <BottomSheet.Overlay />
-        <BottomSheet.Content
-          snapPoints={["65%", "92%"]}
-          enableOverDrag={false}
-          enableDynamicSizing={false}
-          contentContainerClassName="h-full"
-        >
+        {/* 不设置 snapPoints：面板高度随内容自适应，按钮紧跟在内容之后 */}
+        <BottomSheet.Content enableOverDrag={false}>
           {/* BottomSheet 必须常驻挂载，isOpen 由 false→true 才会触发展开动画；
               用 key 让草稿在每次打开时以最新配置重建。 */}
           <FilterSheetBody
@@ -117,10 +113,8 @@ function FilterSheetBody({
         : `默认：${draft.sourceDisplayName}/rotate`;
 
   return (
-    <View className="h-full">
-      <View className="flex-1 px-5">
-        <ScrollView contentContainerClassName="pb-4">
-          <Text className="pt-2 text-lg font-bold text-surface-foreground">筛选与旋转设置</Text>
+    <View className="px-5" style={{ paddingBottom: Math.max(insets.bottom + 4, 20) }}>
+      <Text className="pt-2 text-lg font-bold text-surface-foreground">筛选与旋转设置</Text>
 
           <Section title="来源">
             <View className="flex-row gap-2">
@@ -210,13 +204,8 @@ function FilterSheetBody({
               </Button>
             </View>
           </Section>
-        </ScrollView>
-      </View>
 
-      <View
-        className="flex-row gap-3 border-t border-separator px-5 pt-4"
-        style={{ paddingBottom: Math.max(insets.bottom, 16) }}
-      >
+      <View className="mt-5 flex-row gap-3 border-t border-separator pt-4">
         <Button className="flex-1" variant="tertiary" onPress={onClose}>
           取消
         </Button>
