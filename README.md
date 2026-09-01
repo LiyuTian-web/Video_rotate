@@ -12,10 +12,16 @@
   <tr>
     <th>视频库</th>
     <th>筛选设置</th>
+    <th>设置</th>
+    <th>关于</th>
+    <th>深色模式</th>
   </tr>
   <tr>
-    <td><img src="screenshots/v120-home.png" alt="视频库首页" width="390"></td>
-    <td><img src="screenshots/v120-filter.png" alt="筛选抽屉" width="390"></td>
+    <td><img src="screenshots/v20-home.png" alt="视频库首页" width="220"></td>
+    <td><img src="screenshots/v20-filter.png" alt="筛选与旋转设置" width="220"></td>
+    <td><img src="screenshots/v20-settings.png" alt="设置页" width="220"></td>
+    <td><img src="screenshots/v20-about.png" alt="关于页" width="220"></td>
+    <td><img src="screenshots/v20-home-dark.png" alt="深色模式" width="220"></td>
   </tr>
 </table>
 

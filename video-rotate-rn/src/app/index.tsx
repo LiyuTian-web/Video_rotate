@@ -241,7 +241,7 @@ export default function HomeScreen(): JSX.Element {
       <View className="flex-1 px-4">
         <View className="flex-row items-center justify-between pb-4">
           <Text className="text-3xl font-bold text-foreground">无损视频旋转</Text>
-          <Button size="sm" variant="tertiary" aria-label="设置" onPress={() => router.push("/about")}>
+          <Button size="sm" variant="tertiary" aria-label="设置" onPress={() => router.push("/settings")}>
             <Ionicons name="settings-outline" size={22} color={foregroundColor} />
           </Button>
         </View>
@@ -254,7 +254,7 @@ export default function HomeScreen(): JSX.Element {
           className="mb-4 w-full"
         >
           <Ionicons name="options-outline" size={18} color={foregroundColor} />
-          <Text className="text-sm font-semibold text-secondary-foreground">筛选</Text>
+          <Text className="text-sm font-semibold text-surface-secondary-foreground">筛选</Text>
           <Text numberOfLines={1} className="flex-1 text-right text-xs text-muted">
             {filterSummary(config)}
           </Text>

@@ -1,43 +1,18 @@
 import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
-import { Button, Card, Chip } from "heroui-native";
+import { Button, Card } from "heroui-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import type { JSX } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Image, Linking, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCSSVariable } from "uniwind";
 
-import type { ThemeMode } from "../lib/appearance";
-import { loadThemeMode, saveThemeMode } from "../lib/appearance";
+import { SectionHeader } from "../components/section-header";
 
 const AUTHOR_EMAIL = "woshitianyumi@outlook.com";
 
 type IconName = keyof typeof Ionicons.glyphMap;
-
-const themeModes: { value: ThemeMode; label: string; icon: IconName }[] = [
-  { value: "system", label: "跟随系统", icon: "phone-portrait-outline" },
-  { value: "light", label: "浅色", icon: "sunny-outline" },
-  { value: "dark", label: "深色", icon: "moon-outline" },
-];
-
-function SectionHeader({
-  icon,
-  title,
-  className,
-}: {
-  icon: IconName;
-  title: string;
-  className?: string;
-}): JSX.Element {
-  const muted = useCSSVariable("--muted");
-  return (
-    <View className={`flex-row items-center gap-2 ${className ?? ""}`}>
-      <Ionicons name={icon} size={18} color={typeof muted === "string" ? muted : "#8e8e93"} />
-      <Text className="text-base font-bold text-foreground">{title}</Text>
-    </View>
-  );
-}
 
 function DonationCard({
   title,
@@ -82,30 +57,14 @@ function InfoRow({
   );
 }
 
-export default function SettingsScreen(): JSX.Element {
+export default function AboutScreen(): JSX.Element {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState<string | null>(null);
-  const [currentMode, setCurrentMode] = useState<ThemeMode>("system");
   const foreground = useCSSVariable("--foreground");
   const accent = useCSSVariable("--accent");
   const foregroundColor = typeof foreground === "string" ? foreground : "#000";
   const accentColor = typeof accent === "string" ? accent : "#3b82f6";
-
-  useEffect(() => {
-    let active = true;
-    void loadThemeMode().then((saved) => {
-      if (active) setCurrentMode(saved);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const selectMode = (next: ThemeMode): void => {
-    setCurrentMode(next);
-    void saveThemeMode(next);
-  };
 
   const contactAuthor = async (): Promise<void> => {
     setMessage(null);
@@ -128,8 +87,8 @@ export default function SettingsScreen(): JSX.Element {
           <Text className="text-sm font-semibold text-foreground">返回</Text>
         </Button>
         <View className="flex-1 flex-row items-center justify-center gap-1.5 pr-16">
-          <Ionicons name="settings-outline" size={20} color={foregroundColor} />
-          <Text className="text-xl font-bold text-foreground">设置</Text>
+          <Ionicons name="information-circle-outline" size={20} color={foregroundColor} />
+          <Text className="text-xl font-bold text-foreground">关于</Text>
         </View>
       </View>
       <View className="h-px bg-separator" />
@@ -137,25 +96,6 @@ export default function SettingsScreen(): JSX.Element {
         contentContainerClassName="gap-6 px-6 py-8"
         showsVerticalScrollIndicator={false}
       >
-        <View className="gap-3">
-          <SectionHeader icon="color-palette-outline" title="外观模式" />
-          <View className="flex-row gap-2">
-            {themeModes.map((item) => (
-              <Chip
-                key={item.value}
-                size="md"
-                variant={currentMode === item.value ? "primary" : "secondary"}
-                color="accent"
-                onPress={() => selectMode(item.value)}
-              >
-                <Chip.Label>{item.label}</Chip.Label>
-              </Chip>
-            ))}
-          </View>
-        </View>
-
-        <View className="h-px bg-separator" />
-
         <View className="items-center gap-1">
           <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-accent-soft">
             <Ionicons name="videocam-outline" size={30} color={accentColor} />
@@ -166,6 +106,8 @@ export default function SettingsScreen(): JSX.Element {
             <Text className="text-xs font-medium text-muted">V 2.0.0</Text>
           </View>
         </View>
+
+        <View className="h-px bg-separator" />
 
         <View className="gap-1">
           <SectionHeader icon="person-circle-outline" title="关于作者" />
