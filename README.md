@@ -4,6 +4,8 @@
 
 一款面向 Android 的本地视频方向修正工具，主要解决尼康相机竖屏拍摄后，导出的 MOV 视频仍被横向播放的问题。应用只修改 MOV/MP4 视频轨道的标准显示矩阵，不解码、不重新编码、不重采样，因此处理速度快，画质与原始媒体码流保持不变。
 
+V 2.0 起界面使用 **React Native + HeroUI Native** 重写，核心旋转引擎沿用经过字节级验证的 Kotlin 无损处理逻辑。
+
 [下载最新版本](https://github.com/LiyuTian-web/Video_rotate/releases/latest) · [查看测试报告](%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A-v1.2.0.md) · [反馈问题](https://github.com/LiyuTian-web/Video_rotate/issues)
 
 ## 界面预览
@@ -36,7 +38,8 @@
 - 自动排除与照片配套的动态照片短视频，避免误选
 - 支持默认输出和自定义 SAF 输出目录，并自动处理重名文件
 - 支持后台任务、通知进度和任务取消
-- 适配 Android 16、系统状态栏、刘海、导航栏、横屏与平板布局
+- 支持跟随系统、浅色、深色三种外观模式，选择后长期保留
+- 适配 Android 16、系统状态栏、刘海与手势导航
 
 ## 为什么是“无损旋转”？
 
@@ -50,11 +53,20 @@
 
 核心测试会逐字节验证：除标准显示矩阵外，文件中的其他字节均保持不变。
 
+## 项目结构
+
+```text
+├─ app/              1.x 原版（Kotlin + Jetpack Compose）
+├─ video-rotate-rn/  2.0 重写版（React Native + Expo + HeroUI Native）
+│  └─ modules/video-rotate/  无损旋转核心 Kotlin 原生模块
+└─ core-tests/       核心逻辑 JVM 单元测试（两版共用同一套引擎）
+```
+
 ## 下载与安装
 
 前往 [Releases](https://github.com/LiyuTian-web/Video_rotate/releases/latest) 下载最新 APK，在 Android 手机上允许“安装未知应用”后安装即可。
 
-当前版本：**V 1.2.0**
+当前版本：**V 2.0.0**
 
 ## 使用方法
 
@@ -85,8 +97,9 @@ Movies/无损视频旋转/原文件夹/rotate/
 
 ## 兼容性与限制
 
-- 最低支持 Android 8.0（API 26），目标版本 Android 16（API 36）
-- 主要在 Android 16 模拟器上完成界面与功能验收
+- V 2.0（React Native）最低支持 Android 7.0（API 24），目标版本 Android 16（API 36）
+- V 1.x（Compose）最低支持 Android 8.0（API 26）
+- 主要在 Android 16 真机与模拟器上完成界面与功能验收
 - 支持 ISO-BMFF/QuickTime 结构的 `.MOV` 和 `.MP4`
 - 文件夹模式不会递归扫描子目录
 - 严格无损旋转依赖播放器遵循标准显示矩阵；少数播放器或上传平台可能忽略或移除该信息
@@ -95,22 +108,24 @@ Movies/无损视频旋转/原文件夹/rotate/
 
 ## 构建项目
 
-环境要求：
+### V 2.0 React Native 版
 
-- JDK 21
-- Android SDK Platform 36
-- Android SDK Build Tools 36.0.0
+环境要求：Node.js 20+、JDK 21、Android SDK Platform 36、NDK 27.1
 
-Windows：
+```powershell
+cd video-rotate-rn
+npm install
+npx expo prebuild --platform android
+cd android
+.\gradlew.bat assembleRelease "-PreactNativeArchitectures=arm64-v8a"
+```
+
+APK 位于 `video-rotate-rn/android/app/build/outputs/apk/release/app-release.apk`。
+
+### V 1.x Compose 原版
 
 ```powershell
 .\gradlew.bat :core-tests:test :app:assembleDebug
-```
-
-macOS / Linux：
-
-```bash
-./gradlew :core-tests:test :app:assembleDebug
 ```
 
 构建生成的 APK 位于：
@@ -143,6 +158,6 @@ app/build/outputs/apk/debug/app-debug.apk
 - 软件作者：**顶天立宇**
 - 联系邮箱：[woshitianyumi@outlook.com](mailto:woshitianyumi@outlook.com)
 
-如果这个项目对你有帮助，欢迎点一个 Star。应用内“关于本软件”页面也提供赞赏入口。
+如果这个项目对你有帮助，欢迎点一个 Star。应用内“设置 → 关于本软件”页面也提供赞赏入口。
 
 本项目为独立开发工具，与 Nikon Corporation 无隶属、授权或合作关系；NIKON 为其权利人的商标。
