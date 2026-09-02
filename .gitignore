@@ -22,3 +22,14 @@ screenshots/*
 !screenshots/v120-about.png
 !screenshots/v120-about-codes.png
 !screenshots/v120-landscape-filter.png
+!screenshots/v20-home.png
+!screenshots/v20-home-dark.png
+!screenshots/v20-filter.png
+!screenshots/v20-settings.png
+!screenshots/v20-about.png
+
+core-tests/bin/
+.agents/
+.claude/
+opencode.json
+skills-lock.json
